@@ -1,0 +1,191 @@
+API
+ - Methods of communication b.w software components
+ 
+REST API
+	Methods to access process and handle web resources 
+	
+	
+PS C:\Users\Kovilvis\Documents\restapi> cd .\venv\
+PS C:\Users\Kovilvis\Documents\restapi\venv> cd ..
+PS C:\Users\Kovilvis\Documents\restapi> virtualenv --no-download --extra-search-dir /opt/pypi/downloads venv
+Using base prefix 'c:\\python36'
+New python executable in C:\Users\Kovilvis\Documents\restapi\venv\Scripts\python.exe
+Installing setuptools, pip, wheel...
+done.
+PS C:\Users\Kovilvis\Documents\restapi> .\venv\Scripts\activate
+(venv) PS C:\Users\Kovilvis\Documents\restapi> pip install django==1.11
+Collecting django==1.11
+ERROR: Operation cancelled by user
+(venv) PS C:\Users\Kovilvis\Documents\restapi> pip install django==1.11 --proxy "hydproxy.es.oneadp.com:8080"
+Collecting django==1.11
+  Downloading https://files.pythonhosted.org/packages/47/a6/078ebcbd49b19e22fd560a2348cfc5cec9e5dcfe3c4fad8e64c9865135bb/Django-1.11-py2.py3-none-any.whl (6.9MB)
+     |████████████████████████████████| 6.9MB 467kB/s
+Collecting pytz (from django==1.11)
+  Downloading https://files.pythonhosted.org/packages/3d/73/fe30c2daaaa0713420d0382b16fbb761409f532c56bdcc514bf7b6262bb6/pytz-2019.1-py2.py3-none-any.whl (510kB)
+     |████████████████████████████████| 512kB ...
+Installing collected packages: pytz, django
+Successfully installed django-1.11 pytz-2019.1
+(venv) PS C:\Users\Kovilvis\Documents\restapi> pip install djangorestframework --proxy "hydproxy.es.oneadp.com:8080"
+Collecting djangorestframework
+  Downloading https://files.pythonhosted.org/packages/1b/fe/fcebec2a98fbd1548da1c12ce8d7f634a02a9cce350833fa227a625ec624/djangorestframework-3.9.4-py2.py3-none-any.whl (911kB)
+     |████████████████████████████████| 921kB 204kB/s
+Installing collected packages: djangorestframework
+Successfully installed djangorestframework-3.9.4
+(venv) PS C:\Users\Kovilvis\Documents\restapi> pip install markdown --proxy "hydproxy.es.oneadp.com:8080"
+Collecting markdown
+  Downloading https://files.pythonhosted.org/packages/c0/4e/fd492e91abdc2d2fcb70ef453064d980688762079397f779758e055f6575/Markdown-3.1.1-py2.py3-none-any.whl (87kB)
+     |████████████████████████████████| 92kB 70kB/s
+Requirement already satisfied: setuptools>=36 in c:\users\kovilvis\documents\restapi\venv\lib\site-packages (from markdown) (41.0.1)
+Installing collected packages: markdown
+Successfully installed markdown-3.1.1
+(venv) PS C:\Users\Kovilvis\Documents\restapi> pip install django-filter --proxy "hydproxy.es.oneadp.com:8080"
+Collecting django-filter
+  Downloading https://files.pythonhosted.org/packages/48/b4/7d52fb480108c9af88a4af520b371ac2ada55eac9970e025f147d0131b64/django_filter-2.1.0-py3-none-any.whl (69kB)
+     |████████████████████████████████| 71kB 58kB/s
+Requirement already satisfied: Django>=1.11 in c:\users\kovilvis\documents\restapi\venv\lib\site-packages (from django-filter) (1.11)
+Requirement already satisfied: pytz in c:\users\kovilvis\documents\restapi\venv\lib\site-packages (from Django>=1.11->django-filter) (2019.1)
+Installing collected packages: django-filter
+Successfully installed django-filter-2.1.0
+(venv) PS C:\Users\Kovilvis\Documents\restapi>
+
+
+
+
+
+
+(venv) PS C:\Users\Kovilvis\Documents\restapi\src> python .\manage.py shell
+Python 3.6.7 (v3.6.7:6ec5cf24b7, Oct 20 2018, 13:35:33) [MSC v.1900 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from status.models import Status
+>>> status.api import serializers
+  File "<console>", line 1
+    status.api import serializers
+                    ^
+SyntaxError: invalid syntax
+>>> from status.api import serializers
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "C:\Users\Kovilvis\Documents\restapi\src\status\api\serializers.py", line 1, in <module>
+    from rest_framwork import serializers
+ModuleNotFoundError: No module named 'rest_framwork'
+>>> from status.api import serializers
+>>> from status.api.serializers import StatusSerializers
+>>> obj = Status.objests.first()
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+AttributeError: type object 'Status' has no attribute 'objests'
+>>> obj = Status.objects.first()
+>>> obj
+<Status: hello>
+>>> data = StatusSerializers(obj)
+>>> data
+StatusSerializers(<Status: hello>):
+    user = PrimaryKeyRelatedField(queryset=User.objects.all())
+    content = CharField(allow_blank=True, allow_null=True, required=False, style={'base_template': 'textarea.html'})
+    image = ImageField(allow_null=True, max_length=100, required=False, validators=[<django.core.validators.FileExtensionValidator object>])
+>>> data.data
+{'user': 1, 'content': 'hello', 'image': None}
+>>> type(data.data)
+<class 'rest_framework.utils.serializer_helpers.ReturnDict'>
+>>> import json
+>>> json.loads(data.data)
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "c:\python36\Lib\json\__init__.py", line 348, in loads
+    'not {!r}'.format(s.__class__.__name__))
+TypeError: the JSON object must be str, bytes or bytearray, not 'ReturnDict'
+>>> from rest_framwork.renderers import JSONRenderer
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+ModuleNotFoundError: No module named 'rest_framwork'
+>>> from rest_framework.renderers import JSONRenderer
+>>> new_json_data = JSONRenderer().render(data.data)
+>>> print(new_json_data)
+b'{"user":1,"content":"hello","image":null}'
+>>> json.loads(new_json_data)
+{'user': 1, 'content': 'hello', 'image': None}
+>>> from rest_framework.parsers import JSONParser
+>>> json = new_json_data
+>>> stream = BytesIO(json)
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+NameError: name 'BytesIO' is not defined
+>>> from django.utils.six import BytesIO
+>>> stream = BytesIO(json)
+>>> data = JSONParser().parse(stream)
+>>> data
+{'user': 1, 'content': 'hello', 'image': None}
+
+
+>>> qs = Status.objects.all()
+>>> serializer = StatusSerializers(qs, many=True)
+>>> serializer.data
+[OrderedDict([('user', 1), ('content', 'hello'), ('image', None)])]
+>>> json_date = JSONRenderer().render(serializer.data)
+>>> json_data
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+NameError: name 'json_data' is not defined
+>>> json_date
+b'[{"user":1,"content":"hello","image":null}]'
+>>> json.loads(json_date)
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+AttributeError: 'bytes' object has no attribute 'loads'
+>>> import json
+>>> json.loads(json_date)
+[{'user': 1, 'content': 'hello', 'image': None}]
+>>> stream = BytesIO(json_date)
+>>> date = JSONParser().parse(stream)
+>>> data
+{'user': 1, 'content': 'hello', 'image': None}
+>>>
+
+
+>>> from status.api.serializers import StatusSerializers
+>>> from status.models import Status
+>>> data = {'user': 1}
+serializer = StatusSerializers(data=data)
+>>> serializer.is_valid()
+True
+>>> serializer.save()
+<Status: None>
+>>> Status.objects.count()
+2
+>>> Status.objects.all()
+<QuerySet [<Status: hello>, <Status: None>]>
+>>> serializer = StatusSerializers(data=data)
+>>> serializer.save()
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "C:\Users\Kovilvis\Documents\restapi\venv\lib\site-packages\rest_framework\serializers.py", line 180, in save
+    'You must call `.is_valid()` before calling `.save()`.'
+AssertionError: You must call `.is_valid()` before calling `.save()`.
+>>> serializer.is_valid()
+True
+>>> serializer.save()
+<Status: None>
+>>> Status.objects.all()
+<QuerySet [<Status: hello>, <Status: None>, <Status: None>]>
+>>> Status.objects.all()
+<QuerySet [<Status: hello>]>
+>>> obj = Status.objects.first()
+>>> data = {'content': 'Something here'}
+>>> update_serializer = StatusSerializers(obj, data=data)
+>>> update_serializer.is_valid()
+False
+>>> update_serializer.errors
+{'user': [ErrorDetail(string='This field is required.', code='required')]}
+
+>>> obj = Status.objects.first()
+>>> data = {'content': 'Something here', 'user': 1}
+>>> update_serializer = StatusSerializers(obj, data=data)
+>>> update_serializer.is_valid()
+True
+>>> update_serializer.save()
+<Status: Something here>
+
+
+
+
